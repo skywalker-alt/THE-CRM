@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@theme {
+  /* Neo-Memphis Core Palette */
+  --color-neo-yellow: #facc15;
+  --color-neo-cyan: #22d3ee;
+  --color-neo-magenta: #f472b6;
+  --color-neo-blue: #3b82f6;
+  --color-neo-black: #1a1a1a;
+  --color-neo-white: #ffffff;
+  
+  /* Theme Colors */
+  --color-bg-deep: #0a0a0a;
+  --color-bg-surface: #141414;
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  
+  --radius-memphis: 2rem;
+  --border-width-thick: 2px;
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-bg-deep text-text-main overflow-x-hidden;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Outfit', sans-serif;
+    @apply tracking-tight;
+  }
+}
+
+@layer components {
+  .neo-card {
+    @apply border-2 border-neo-black bg-bg-surface rounded-[2rem] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200;
+  }
+  
+  .neo-card-hover:hover {
+    @apply shadow-[8px_8px_0px_0px_var(--color-neo-yellow)];
+    transform: translate(-2px, -2px);
+  }
+
+  .neo-button {
+    @apply border-2 border-neo-black rounded-full px-6 py-2 font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+  }
+
+  .neo-button-primary {
+    @apply bg-neo-blue text-neo-white hover:bg-blue-600;
+  }
+
+  .neo-button-secondary {
+    @apply bg-transparent border-gray-700 text-gray-400 hover:border-white hover:text-white shadow-none;
+  }
+
+  .glass-nav {
+    @apply sticky top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-xl;
+  }
+
+  .blob-shape {
+    @apply absolute -z-10 rounded-full blur-3xl opacity-20 pointer-events-none;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-bg-surface border-2 border-neo-black rounded-full;
+}
