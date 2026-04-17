@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLeadStore } from '../store/useLeadStore';
 import { useCalendarStore } from '../store/useCalendarStore';
+
 import { format, isSameDay } from 'date-fns';
 import { 
   Target, 
@@ -34,34 +35,47 @@ const MyTodaySidebar = ({ onLeadClick }) => {
   const mySales = useLeadStore((state) => state.mySales);
   const completeNextAction = useLeadStore((state) => state.completeNextAction);
   const [todayEvents, setTodayEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
     const loadTodayEvents = async () => {
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      const end = new Date();
-      end.setHours(23, 59, 59, 999);
-      const events = await fetchEvents(start.toISOString(), end.toISOString(), { 
-        globalOnly: false,
-        userId: currentUser.id 
-      });
-      setTodayEvents(events);
+      setIsLoading(true);
+      try {
+        const fetchEvents = useCalendarStore.getState().fetchEvents;
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const end = new Date();
+        end.setHours(23, 59, 59, 999);
+        const events = await fetchEvents(start.toISOString(), end.toISOString(), { 
+          globalOnly: false,
+          userId: currentUser.id 
+        });
+        setTodayEvents(events || []);
+      } catch (err) {
+        console.error('Failed to load today events:', err);
+        setTodayEvents([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadTodayEvents();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser?.id]); // Only re-run when the user changes, not on fetchEvents reference change
+  }, [currentUser?.id]); // Only re-run when the user changes
 
   const handleComplete = async (e, item) => {
-    e.stopPropagation(); // Prevent opening the lead modal
-    
-    // Optimistic UI Removal
+    e.stopPropagation();
     if (item.itemType === 'event') {
+      // Optimistically remove from UI
       setTodayEvents(prev => prev.filter(ev => ev.id !== item.originalEventId));
-      await completeEvent(item.originalEventId);
+      // Mark completed in DB
+      try {
+        const completeEvent = useCalendarStore.getState().completeEvent;
+        if (completeEvent) await completeEvent(item.originalEventId);
+      } catch (err) {
+        console.error('Failed to complete event:', err);
+      }
     } else if (item.itemType === 'lead') {
-      // The lead gets removed from this list automatically because nextActionDate becomes null
-      // via the optimistic update in the Zustand store
       await completeNextAction(item.leadId, item.displayType);
     }
   };
