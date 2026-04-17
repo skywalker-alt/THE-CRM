@@ -32,13 +32,16 @@ function App() {
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   
-  // ✅ Use stable selectors — only re-render App when exactly these values change.
-  // Using the full useLeadStore() here caused App to re-render on EVERY store
-  // update (globalPool changes, isLoading flips, etc.) which cascaded into all
-  // children receiving new prop references including NewLeadModal's onClose — 
-  // triggering re-renders that dropped input focus every keystroke.
-  const currentUser = useLeadStore((state) => state.currentUser);
+  // ✅ Granular primitive selectors to prevent App from re-rendering on object ref changes
+  const userId = useLeadStore((state) => state.currentUser?.id);
+  const userRole = useLeadStore((state) => state.currentUser?.role);
   const authInitialized = useLeadStore((state) => state.authInitialized);
+
+  // Stable state setters
+  const handleOpenNewLead = useCallback(() => setShowNewLeadModal(true), []);
+  const handleCloseNewLead = useCallback(() => setShowNewLeadModal(false), []);
+  const handleSelectLead = useCallback((id) => setSelectedLeadId(id), []);
+  const handleCloseDetail = useCallback(() => setSelectedLeadId(null), []);
   // Get initAuth once via getState — it's a stable action reference in Zustand
   // and must NOT be in the useEffect dependency array or it creates an infinite loop.
   useEffect(() => {
@@ -55,7 +58,7 @@ function App() {
     );
   }
 
-  if (!currentUser) {
+  if (!userId) {
     return <AuthOverlay />;
   }
 
@@ -122,7 +125,7 @@ function App() {
 
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => setShowNewLeadModal(true)}
+            onClick={handleOpenNewLead}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-indigo-500/10 transition-all"
           >
             <PlusCircle size={18} strokeWidth={2.5} />
@@ -173,10 +176,10 @@ function App() {
 
       {/* Modals */}
       {selectedLeadId && (
-        <LeadDetailModal leadId={selectedLeadId} onClose={() => setSelectedLeadId(null)} />
+        <LeadDetailModal leadId={selectedLeadId} onClose={handleCloseDetail} />
       )}
       {showNewLeadModal && (
-        <NewLeadModal onClose={() => setShowNewLeadModal(false)} />
+        <NewLeadModal onClose={handleCloseNewLead} />
       )}
     </div>
   );

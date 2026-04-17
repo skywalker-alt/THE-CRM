@@ -76,7 +76,7 @@ function ScrapedResultCard({ lead, saved, onSelect }) {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export function NewLeadModal({ onClose }) {
+export const NewLeadModal = React.memo(function NewLeadModal({ onClose }) {
   // ✅ CRITICAL FIX: Use a stable selector so this component ONLY re-renders
   // when `addLead` changes — which it never does in Zustand. Without this,
   // ANY store update (isLoading, globalPool, etc.) causes a re-render and
@@ -574,4 +574,4 @@ export function NewLeadModal({ onClose }) {
       </div>
     </div>
   );
-}
+});
