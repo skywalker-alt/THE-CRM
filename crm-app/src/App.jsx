@@ -32,15 +32,19 @@ function App() {
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   
-  const { 
-    currentUser, 
-    authInitialized, 
-    initAuth 
-  } = useLeadStore();
-
+  // ✅ Use stable selectors — only re-render App when exactly these values change.
+  // Using the full useLeadStore() here caused App to re-render on EVERY store
+  // update (globalPool changes, isLoading flips, etc.) which cascaded into all
+  // children receiving new prop references including NewLeadModal's onClose — 
+  // triggering re-renders that dropped input focus every keystroke.
+  const currentUser = useLeadStore((state) => state.currentUser);
+  const authInitialized = useLeadStore((state) => state.authInitialized);
+  // Get initAuth once via getState — it's a stable action reference in Zustand
+  // and must NOT be in the useEffect dependency array or it creates an infinite loop.
   useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+    useLeadStore.getState().initAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount only
 
   if (!authInitialized) {
     return (

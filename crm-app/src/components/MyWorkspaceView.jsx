@@ -28,30 +28,29 @@ import FollowUpModal from './FollowUpModal';
  */
 
 const MyTodaySidebar = ({ onLeadClick }) => {
-  const { fetchEvents, completeEvent, isLoading } = useCalendarStore();
-  const { currentUser, myQualification, mySales, completeNextAction } = useLeadStore();
+  // ✅ Stable selectors
+  const currentUser = useLeadStore((state) => state.currentUser);
+  const myQualification = useLeadStore((state) => state.myQualification);
+  const mySales = useLeadStore((state) => state.mySales);
+  const completeNextAction = useLeadStore((state) => state.completeNextAction);
   const [todayEvents, setTodayEvents] = useState([]);
 
   useEffect(() => {
     if (!currentUser) return;
-    
-    // Fetch user's events for today (both public and private)
     const loadTodayEvents = async () => {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       const end = new Date();
       end.setHours(23, 59, 59, 999);
-      
       const events = await fetchEvents(start.toISOString(), end.toISOString(), { 
-        globalOnly: false, // Show all events assigned to me
+        globalOnly: false,
         userId: currentUser.id 
       });
-      
       setTodayEvents(events);
     };
-
     loadTodayEvents();
-  }, [currentUser, fetchEvents]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id]); // Only re-run when the user changes, not on fetchEvents reference change
 
   const handleComplete = async (e, item) => {
     e.stopPropagation(); // Prevent opening the lead modal
@@ -163,21 +162,22 @@ const MyTodaySidebar = ({ onLeadClick }) => {
 
 export function MyWorkspaceView({ onLeadClick }) {
   const [activeSubTab, setActiveSubTab] = useState('qualification');
-  const { 
-    myQualification, 
-    mySales, 
-    fetchMyWorkspace, 
-    unclaimLead 
-  } = useLeadStore();
   const [qualifyingLead, setQualifyingLead] = useState(null);
   const [closingLead, setClosingLead] = useState(null);
   const [followUpLead, setFollowUpLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // ✅ Stable selectors
+  const myQualification = useLeadStore((state) => state.myQualification);
+  const mySales = useLeadStore((state) => state.mySales);
+  const unclaimLead = useLeadStore((state) => state.unclaimLead);
+
   useEffect(() => {
-    fetchMyWorkspace('qualification');
-    fetchMyWorkspace('sales');
-  }, [fetchMyWorkspace]);
+    // Use getState() to avoid putting fetchMyWorkspace in the dep array,
+    // which re-runs every time the store updates and causes an infinite loop.
+    useLeadStore.getState().fetchMyWorkspace('qualification');
+    useLeadStore.getState().fetchMyWorkspace('sales');
+  }, []); // Fetch once on mount
 
   // Raw active list
   const activeLeads = activeSubTab === 'qualification' ? myQualification : mySales;

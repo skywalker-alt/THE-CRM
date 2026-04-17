@@ -7,11 +7,16 @@ import { Building, Globe, Mail, Phone, Rocket, Search } from 'lucide-react';
  * Displaying unassigned leads in a high-density, gamified Neo-Memphis grid.
  */
 export function GlobalPoolView({ onLeadClick }) {
-  const { globalPool, fetchGlobalPool, claimLead, isLoading } = useLeadStore();
+  // ✅ Use stable selectors to prevent unnecessary re-renders
+  const globalPool = useLeadStore((state) => state.globalPool);
+  const isLoading = useLeadStore((state) => state.isLoading);
+  const claimLead = useLeadStore((state) => state.claimLead);
 
   useEffect(() => {
-    fetchGlobalPool();
-  }, [fetchGlobalPool]);
+    // Use getState() to avoid putting fetchGlobalPool in the dep array,
+    // which would cause a re-run loop every time isLoading toggles.
+    useLeadStore.getState().fetchGlobalPool();
+  }, []); // Fetch once on mount
 
   if (isLoading && globalPool.length === 0) {
     return (
@@ -38,14 +43,7 @@ export function GlobalPoolView({ onLeadClick }) {
     <div className="p-8">
       {/* Search/Filter Bar - Neo Style */}
       <div className="mb-12 flex justify-between items-center w-full">
-        <div className="relative w-full max-w-2xl">
-          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400" size={24} strokeWidth={2.5} />
-          <input 
-            type="text" 
-            placeholder="SCAN THE POOL..." 
-            className="w-full pl-10 pr-4 py-4 bg-transparent text-slate-100 focus:outline-none placeholder:text-slate-500 font-bold text-2xl uppercase tracking-tighter shadow-none"
-          />
-        </div>
+
         <div className="bg-[#facc15] border-2 border-black rounded-full px-8 py-5 font-black uppercase text-sm tracking-widest text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center shrink-0">
           {globalPool.length} LEADS ACTIVE
         </div>
