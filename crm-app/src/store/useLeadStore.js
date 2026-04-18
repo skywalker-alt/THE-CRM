@@ -254,7 +254,7 @@ export const useLeadStore = create((set, get) => ({
   },
 
   unclaimLead: async (leadId) => {
-    const { currentUser, globalPool, myQualification, mySales } = get();
+    const { currentUser, globalPool, myQualification, mySales, portfolio } = get();
     if (!currentUser) return;
 
     const leadToUnclaim = myQualification.find(l => l.id === leadId) || 
@@ -377,7 +377,7 @@ export const useLeadStore = create((set, get) => ({
   },
 
   moveLead: async (leadId, newStage) => {
-    const { currentUser, myQualification, mySales } = get();
+    const { currentUser, myQualification, mySales, portfolio } = get();
     if (!currentUser) return;
 
     const lead = myQualification.find(l => l.id === leadId) || 
