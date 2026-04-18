@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import {
   X, Building, User, Mail, Phone, Globe,
   MapPin, Rocket, Search, Loader2, Sparkles,
-  PenLine, CheckCircle2, AlertCircle, ChevronRight,
+  PenLine, CheckCircle2, AlertCircle, ChevronRight, DollarSign,
 } from 'lucide-react';
 import { useLeadStore } from '../store/useLeadStore';
 import { supabase } from '../lib/supabase';
