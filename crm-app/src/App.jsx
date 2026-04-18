@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Globe, 
-  Terminal, 
   Layout, 
   Plus, 
   Bell, 
-  User,
-  Search,
   PlusCircle,
-  Activity
+  CalendarDays,
+  Briefcase
 } from 'lucide-react';
+import { useIsMobile } from './hooks/useIsMobile';
 import { GlobalPoolView } from './components/GlobalPoolView';
 import { MyWorkspaceView } from './components/MyWorkspaceView';
 import { CalendarView } from './components/CalendarView';
@@ -29,6 +28,7 @@ import logoUrl from './assets/logo.png';
  */
 function App() {
   const [activeTab, setActiveTab] = useState('pool');
+  const isMobile = useIsMobile();
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   
@@ -124,16 +124,18 @@ function App() {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* New Lead button — desktop only; mobile uses the FAB in the bottom tab bar */}
           <button 
             onClick={handleOpenNewLead}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-indigo-500/10 transition-all"
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0 active:shadow-indigo-500/10 transition-all"
           >
             <PlusCircle size={18} strokeWidth={2.5} />
             <span className="hidden lg:block font-semibold">New Lead</span>
           </button>
           
-          <div className="h-8 w-[1px] bg-slate-200 mx-2" />
+          <div className="hidden sm:block h-8 w-[1px] bg-slate-200 mx-2" />
           
+          {/* Bell — visible on both but smaller on mobile */}
           <button className="text-slate-400 hover:text-slate-600 transition-colors relative">
             <Bell size={22} />
             <span className="absolute top-0 right-0 max-w-full w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
@@ -143,18 +145,73 @@ function App() {
         </div>
       </nav>
 
-      {/* Mobile Navigation (Sub-Tabs) */}
-      <div className="md:hidden flex justify-center py-4 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
-         <div className="flex gap-4">
-           <button onClick={() => setActiveTab('pool')} className={`text-sm tracking-wide ${activeTab === 'pool' ? 'text-indigo-600 font-semibold' : 'text-slate-500 font-medium'}`}>Pool</button>
-           <button onClick={() => setActiveTab('workspace')} className={`text-sm tracking-wide ${activeTab === 'workspace' ? 'text-indigo-600 font-semibold' : 'text-slate-500 font-medium'}`}>Workspace</button>
-           <button onClick={() => setActiveTab('calendar')} className={`text-sm tracking-wide ${activeTab === 'calendar' ? 'text-indigo-600 font-semibold' : 'text-slate-500 font-medium'}`}>Calendar</button>
-           <button onClick={() => setActiveTab('customers')} className={`text-sm tracking-wide ${activeTab === 'customers' ? 'text-indigo-600 font-semibold' : 'text-slate-500 font-medium'}`}>Portfolio</button>
-         </div>
-      </div>
+      {/* ─── Mobile Bottom Tab Bar (Companion App — 3 core actions only) ─── */}
+      {/* Hidden on md+ because desktop uses the top nav pill. */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-slate-200/70 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] safe-area-inset-bottom">
+        <div className="flex items-stretch h-16 max-w-sm mx-auto">
+          {/* Pool */}
+          <button
+            onClick={() => setActiveTab('pool')}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'pool' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <Globe size={20} strokeWidth={activeTab === 'pool' ? 2.5 : 2} />
+            <span className="text-[10px] font-semibold tracking-wide uppercase">
+              {activeTab === 'pool' && <span className="inline-block w-1 h-1 rounded-full bg-indigo-500 mr-1 align-middle" />}
+              Pool
+            </span>
+          </button>
+
+          {/* New Lead FAB */}
+          <button
+            onClick={handleOpenNewLead}
+            className="flex flex-col items-center justify-center px-4"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 -translate-y-3">
+              <Plus size={22} className="text-white" strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide -mt-1">New</span>
+          </button>
+
+          {/* Workspace */}
+          <button
+            onClick={() => setActiveTab('workspace')}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'workspace' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <Layout size={20} strokeWidth={activeTab === 'workspace' ? 2.5 : 2} />
+            <span className="text-[10px] font-semibold tracking-wide uppercase">Mine</span>
+          </button>
+
+          {/* Calendar */}
+          <button
+            onClick={() => setActiveTab('calendar')}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'calendar' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <CalendarDays size={20} strokeWidth={activeTab === 'calendar' ? 2.5 : 2} />
+            <span className="text-[10px] font-semibold tracking-wide uppercase">Calendar</span>
+          </button>
+
+          {/* Portfolio — desktop only; shown here as a faint shortcut on mobile */}
+          <button
+            onClick={() => setActiveTab('customers')}
+            className={`hidden md:flex flex-1 flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'customers' ? 'text-indigo-600' : 'text-slate-400'
+            }`}
+          >
+            <Briefcase size={20} />
+            <span className="text-[10px] font-semibold tracking-wide uppercase">Portfolio</span>
+          </button>
+        </div>
+      </nav>
 
       {/* Main Content Area */}
-      <main className="container mx-auto pb-24">
+      {/* pb-24 on mobile accounts for the fixed bottom tab bar; desktop keeps standard padding */}
+      <main className="container mx-auto pb-24 md:pb-8">
         {activeTab === 'pool' && (
           <GlobalPoolView onLeadClick={setSelectedLeadId} />
         )}
@@ -169,8 +226,8 @@ function App() {
         )}
       </main>
 
-      {/* Footer Branding Overlay */}
-      <div className="fixed bottom-6 right-8 pointer-events-none opacity-20">
+      {/* Footer Branding Overlay — hidden on mobile to avoid overlapping the tab bar */}
+      <div className="hidden md:block fixed bottom-6 right-8 pointer-events-none opacity-20">
         <h3 className="text-4xl font-bold italic select-none text-slate-300">Q-PLAY CRM v2</h3>
       </div>
 

@@ -40,12 +40,17 @@ export function GlobalPoolView({ onLeadClick }) {
   }
 
   return (
-    <div className="p-8">
-      {/* Search/Filter Bar - Neo Style */}
-      <div className="mb-12 flex justify-between items-center w-full">
+    <div className="p-4 md:p-8">
+      {/* Header Bar */}
+      <div className="mb-8 md:mb-12 flex justify-between items-center w-full">
 
-        <div className="bg-[#facc15] border-2 border-black rounded-full px-8 py-5 font-black uppercase text-sm tracking-widest text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center shrink-0">
+        {/* Lead count badge — hidden on mobile to keep header lean */}
+        <div className="hidden sm:flex bg-[#facc15] border-2 border-black rounded-full px-8 py-5 font-black uppercase text-sm tracking-widest text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] items-center shrink-0">
           {globalPool.length} LEADS ACTIVE
+        </div>
+        {/* Mobile-only compact badge */}
+        <div className="sm:hidden bg-[#facc15] border-2 border-black rounded-full px-4 py-2.5 font-black uppercase text-xs tracking-widest text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center shrink-0">
+          {globalPool.length} Active
         </div>
       </div>
 

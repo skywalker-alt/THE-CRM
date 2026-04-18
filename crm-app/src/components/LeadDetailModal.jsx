@@ -108,24 +108,24 @@ export function LeadDetailModal({ leadId, onClose }) {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       
       {/* Modal Container */}
-      <div className="relative w-full max-w-7xl max-h-[90vh] overflow-hidden bg-white rounded-[2rem] shadow-2xl flex flex-col border border-gray-100">
+      <div className="relative w-full max-w-7xl max-h-[95vh] md:max-h-[90vh] overflow-hidden bg-white rounded-t-[2rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-gray-100">
         
         {/* Header: Unified Blue Style */}
-        <div className="bg-[#3b82f6] p-6 flex justify-between items-center text-white shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-              <Building size={24} />
+        <div className="bg-[#3b82f6] p-4 md:p-6 flex justify-between items-center text-white shrink-0">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <Building size={20} className="md:w-6 md:h-6" />
             </div>
-            <div>
-              <h2 className="text-2xl font-black uppercase tracking-tight leading-none">{lead.companyName}</h2>
-              <p className="text-blue-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Update Lead Information & History</p>
+            <div className="min-w-0">
+              <h2 className="text-lg md:text-2xl font-black uppercase tracking-tight leading-none truncate">{lead.companyName}</h2>
+              <p className="text-blue-100 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80 truncate">Lead Details & History</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
           >
-            <X size={20} strokeWidth={3} />
+            <X size={18} strokeWidth={3} />
           </button>
         </div>
         
@@ -133,12 +133,12 @@ export function LeadDetailModal({ leadId, onClose }) {
         <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-gray-50/50">
             
           {/* Left Column: Form Fields */}
-          <div className="w-full lg:w-2/3 lg:overflow-y-auto p-8 space-y-8 border-b lg:border-b-0 lg:border-r border-gray-200">
+          <div className="w-full lg:w-2/3 lg:overflow-y-auto p-4 md:p-8 space-y-6 md:space-y-8 border-b lg:border-b-0 lg:border-r border-gray-200">
             
             {/* Status Display Card & Primary Actions */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-tighter ${
+            <div className="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6 shadow-sm">
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className={`px-4 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-tighter ${
                    lead.stage === 'Sales' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
                 }`}>
                   {lead.stage === 'Sales' ? 'Closing Phase' : lead.stage}
@@ -149,7 +149,7 @@ export function LeadDetailModal({ leadId, onClose }) {
                 {isUnassigned ? (
                   <button 
                     onClick={() => { claimLead(lead.id); onClose(); }} 
-                    className="bg-[#3b82f6] text-white px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-md shadow-blue-200 flex items-center justify-center gap-2 hover:translate-y-[-2px] transition-all whitespace-nowrap"
+                    className="w-full sm:w-auto bg-[#3b82f6] text-white px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-md shadow-blue-200 flex items-center justify-center gap-2 hover:translate-y-[-2px] transition-all whitespace-nowrap"
                   >
                     <Rocket size={16} /> Claim Lead
                   </button>
@@ -157,81 +157,81 @@ export function LeadDetailModal({ leadId, onClose }) {
                   <>
                     <button 
                       onClick={() => handleMove(lead.stage === 'Qualification' ? 'Sales' : 'Qualification')}
-                      className="border-2 border-[#3b82f6] text-[#3b82f6] px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 hover:bg-blue-50 transition-all whitespace-nowrap"
+                      className="w-full sm:w-auto border-2 border-[#3b82f6] text-[#3b82f6] px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 hover:bg-blue-50 transition-all whitespace-nowrap"
                     >
                       <Rocket size={16} /> Move to {lead.stage === 'Qualification' ? 'Sales' : 'Qualify'}
                     </button>
                     <button 
                       onClick={() => { unclaimLead(lead.id); onClose(); }}
-                      className="text-gray-400 font-bold uppercase text-[9px] tracking-widest hover:text-red-500 transition-colors whitespace-nowrap"
+                      className="text-gray-400 font-bold uppercase text-[9px] tracking-widest hover:text-red-500 transition-colors whitespace-nowrap hidden sm:block"
                     >
                       Release
                     </button>
                   </>
                 ) : (
-                  <div className="text-xs font-black text-gray-400 uppercase border border-gray-200 px-4 py-2 rounded-xl">🔒 Protected</div>
+                  <div className="w-full sm:w-auto text-center text-xs font-black text-gray-400 uppercase border border-gray-200 px-4 py-2 rounded-xl">🔒 Protected</div>
                 )}
               </div>
             </div>
               
               {/* Primary Contact Info Section */}
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
-                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-gray-100 space-y-5 md:space-y-6">
+                <h3 className="text-[10px] md:text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                   <User size={14} className="text-[#3b82f6]" /> Contact Details
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Full Name</label>
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Full Name</label>
                     <input 
                       type="text"
                       value={editForm.fullName}
                       onChange={(e) => setEditForm({...editForm, fullName: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all text-base md:text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Email Address</label>
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Email Address</label>
                     <input 
                       type="email"
                       value={editForm.email}
                       onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all text-base md:text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Phone Number</label>
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Phone Number</label>
                     <input 
                       type="text"
                       value={editForm.phone}
                       onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all text-base md:text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Deal Value ($)</label>
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Deal Value ($)</label>
                     <input 
                       type="number"
                       value={editForm.dealValue}
                       onChange={(e) => setEditForm({...editForm, dealValue: parseFloat(e.target.value)})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all text-base md:text-sm"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Next Action Section */}
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-6">
-                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-gray-100 space-y-5 md:space-y-6">
+                <h3 className="text-[10px] md:text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                   <Bell size={14} className="text-[#3b82f6]" /> Next Action
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Action Type</label>
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Action Type</label>
                     <select
                       value={editForm.nextActionType}
                       onChange={(e) => setEditForm({...editForm, nextActionType: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all appearance-none cursor-pointer"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all appearance-none cursor-pointer text-base md:text-sm"
                     >
                       <option value="">-- Select Type --</option>
                       <option value="Call">📞 Call</option>
@@ -241,43 +241,46 @@ export function LeadDetailModal({ leadId, onClose }) {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase ml-1 flex items-center gap-1">
+                    <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1 flex items-center gap-1">
                       <CalendarDays size={11} /> Action Date
                     </label>
                     <input
                       type="date"
                       value={editForm.nextActionDate}
                       onChange={(e) => setEditForm({...editForm, nextActionDate: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all"
+                      className="w-full bg-gray-50 border border-gray-200 p-3 md:p-4 rounded-xl md:rounded-2xl font-bold text-black focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all text-base md:text-sm"
                     />
                   </div>
                 </div>
                 <div className="space-y-2 mt-4">
-                  <label className="text-[10px] font-black text-gray-500 uppercase ml-1">Action Notes / Description</label>
+                  <label className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase ml-1">Action Notes</label>
                   <textarea
                     value={editForm.internalNotes || ''}
                     onChange={(e) => setEditForm({...editForm, internalNotes: e.target.value})}
                     placeholder="e.g. Discuss the comparative pricing slide deck..."
-                    className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl font-medium text-gray-700 h-24 focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all resize-none"
+                    className="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl md:rounded-2xl font-medium text-gray-700 h-20 md:h-24 focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all resize-none text-base md:text-sm"
                   />
                 </div>
               </div>
 
-              {/* Lead Story Panel: The Hero Area */}
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 space-y-4">
-                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              {/* Lead Story Panel */}
+              <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-gray-100 space-y-4">
+                <h3 className="text-[10px] md:text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                   <MessageSquare size={14} className="text-[#3b82f6]" /> Lead Information
                 </h3>
                 <textarea 
                   value={editForm.leadStory}
                   onChange={(e) => setEditForm({...editForm, leadStory: e.target.value})}
-                  className="w-full bg-gray-50 border border-gray-200 p-6 rounded-2xl font-medium text-gray-700 h-48 focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all resize-none"
+                  className="w-full bg-gray-50 border border-gray-200 p-5 md:p-6 rounded-xl md:rounded-2xl font-medium text-gray-700 h-32 md:h-48 focus:ring-2 focus:ring-[#3b82f6] outline-none transition-all resize-none text-base md:text-sm"
                   placeholder="Tell the full narrative of this lead..."
                 />
               </div>
 
-              {/* Update Call To Action */}
-              <div className="flex items-center gap-4 pt-4 pb-12">
+              {/* Mobile Sticky CTA Placeholder (Hidden on desktop, space filler) */}
+              <div className="h-20 lg:hidden" />
+
+              {/* Desktop Update CTA */}
+              <div className="hidden lg:flex items-center gap-4 pt-4 pb-12">
                 <button 
                   onClick={handleSaveLead}
                   disabled={isSaving}
@@ -291,8 +294,8 @@ export function LeadDetailModal({ leadId, onClose }) {
 
           {/* Right Column: Activity Timeline */}
           <div className="w-full lg:w-1/3 lg:overflow-y-auto flex flex-col bg-white">
-            <div className="p-6 border-b border-gray-100 bg-gray-50 shrink-0">
-              <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div className="p-4 md:p-6 border-b border-gray-100 bg-gray-50 shrink-0">
+              <h3 className="text-[10px] md:text-sm font-black text-gray-800 uppercase tracking-widest mb-3 md:mb-4 flex items-center gap-2">
                 <History size={16} className="text-[#3b82f6]" /> Activity Timeline
               </h3>
               
@@ -303,7 +306,7 @@ export function LeadDetailModal({ leadId, onClose }) {
                   value={quickNote}
                   onChange={(e) => setQuickNote(e.target.value)}
                   placeholder="Drop a quick note..."
-                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-12 text-sm font-medium focus:ring-2 focus:ring-[#3b82f6] transition-all outline-none"
+                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-12 text-base md:text-sm font-medium focus:ring-2 focus:ring-[#3b82f6] transition-all outline-none"
                 />
                 <button 
                   type="submit"
@@ -355,6 +358,25 @@ export function LeadDetailModal({ leadId, onClose }) {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Mobile Sticky Action Bar */}
+        <div className="lg:hidden sticky bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 flex items-center justify-between gap-4 z-50">
+          <button 
+            onClick={handleSaveLead}
+            disabled={isSaving}
+            className="flex-1 bg-[#3b82f6] text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-100 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+          {!isUnassigned && isOwner && (
+            <button 
+              onClick={() => { unclaimLead(lead.id); onClose(); }}
+              className="px-4 py-4 rounded-xl border border-gray-200 text-gray-400 font-bold uppercase text-[10px] tracking-widest active:bg-gray-50 transition-all"
+            >
+              Release
+            </button>
+          )}
         </div>
       </div>
     </div>

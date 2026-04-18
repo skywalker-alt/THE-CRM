@@ -257,7 +257,9 @@ export const useLeadStore = create((set, get) => ({
     const { currentUser, globalPool, myQualification, mySales } = get();
     if (!currentUser) return;
 
-    const leadToUnclaim = myQualification.find(l => l.id === leadId) || mySales.find(l => l.id === leadId);
+    const leadToUnclaim = myQualification.find(l => l.id === leadId) || 
+                          mySales.find(l => l.id === leadId) ||
+                          portfolio.find(l => l.id === leadId);
     if (!leadToUnclaim) return;
 
     const originalStage = leadToUnclaim.stage;
@@ -266,6 +268,7 @@ export const useLeadStore = create((set, get) => ({
     set({
       myQualification: myQualification.filter(l => l.id !== leadId),
       mySales: mySales.filter(l => l.id !== leadId),
+      portfolio: (portfolio || []).filter(l => l.id !== leadId),
       globalPool: [{ ...leadToUnclaim, assignedTo: null, stage: 'Unassigned', ownerId: null }, ...globalPool]
     });
 
@@ -377,16 +380,19 @@ export const useLeadStore = create((set, get) => ({
     const { currentUser, myQualification, mySales } = get();
     if (!currentUser) return;
 
-    const lead = myQualification.find(l => l.id === leadId) || mySales.find(l => l.id === leadId);
+    const lead = myQualification.find(l => l.id === leadId) || 
+                 mySales.find(l => l.id === leadId) ||
+                 (portfolio || []).find(l => l.id === leadId);
     if (!lead) return;
 
     const oldStage = lead.stage;
 
     // Optimistic 
-    set({
-      myQualification: newStage === 'Qualification' ? [...myQualification, { ...lead, stage: newStage }] : myQualification.filter(l => l.id !== leadId),
-      mySales: newStage === 'Sales' ? [...mySales, { ...lead, stage: newStage }] : mySales.filter(l => l.id !== leadId)
-    });
+    set(state => ({
+      myQualification: newStage === 'Qualification' ? [...state.myQualification, { ...lead, stage: newStage }] : state.myQualification.filter(l => l.id !== leadId),
+      mySales: newStage === 'Sales' ? [...state.mySales, { ...lead, stage: newStage }] : state.mySales.filter(l => l.id !== leadId),
+      portfolio: state.portfolio.filter(l => l.id !== leadId)
+    }));
 
     try {
       const { error } = await supabase

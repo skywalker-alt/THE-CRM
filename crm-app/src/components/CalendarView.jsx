@@ -104,9 +104,9 @@ export const CalendarView = () => {
   const selectedDayEvents = events.filter(e => isSameDay(new Date(e.start_time), selectedDay));
 
   return (
-    <div className="flex justify-center h-full animate-in fade-in duration-300 px-4 pb-8">
-      {/* Main Container - Clean White rounded layout */}
-      <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col min-h-[700px]">
+    <div className="flex justify-center h-full animate-in fade-in duration-300 px-2 sm:px-4 pb-8">
+      {/* Main Container */}
+      <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col min-h-[600px] md:min-h-[700px]">
         
         {/* Header Section */}
         <div className="bg-[#1a1a1a] text-white p-6 sm:px-10 sm:pt-10 sm:pb-8 flex flex-col gap-8 rounded-t-[2rem]">
@@ -120,12 +120,12 @@ export const CalendarView = () => {
               </h1>
             </div>
 
-            <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
               {/* Context Selector Toggle */}
               <div className="bg-white/5 border border-white/10 p-1 rounded-xl flex items-center gap-1">
                 <button 
                   onClick={() => setViewContext('global')}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     viewContext === 'global' 
                       ? 'bg-white text-black shadow-lg scale-105' 
                       : 'text-white/40 hover:text-white/60'
@@ -135,13 +135,14 @@ export const CalendarView = () => {
                 </button>
                 <button 
                   onClick={() => setViewContext('personal')}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     viewContext === 'personal' 
                       ? 'bg-white text-black shadow-lg scale-105' 
                       : 'text-white/40 hover:text-white/60'
                   }`}
                 >
-                  My Workspace
+                  <span className="hidden sm:inline">My Workspace</span>
+                  <span className="sm:hidden">Mine</span>
                 </button>
               </div>
 
@@ -158,9 +159,10 @@ export const CalendarView = () => {
               </div>
               <button 
                 onClick={() => setShowEventModal(true)}
-                className="flex-1 sm:flex-none justify-center bg-[#3b82f6] text-white px-6 py-2.5 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-blue-600 transition-colors flex items-center gap-2"
+                className="flex-1 sm:flex-none justify-center bg-[#3b82f6] text-white px-4 sm:px-6 py-2.5 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-blue-600 transition-colors flex items-center gap-2"
               >
-                <Plus size={16} strokeWidth={3} /> Add Event
+                <Plus size={16} strokeWidth={3} />
+                <span className="hidden sm:inline">Add Event</span>
               </button>
             </div>
           </div>

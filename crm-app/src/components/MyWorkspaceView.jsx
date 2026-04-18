@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLeadStore } from '../store/useLeadStore';
 import { useCalendarStore } from '../store/useCalendarStore';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 import { format, isSameDay } from 'date-fns';
 import { 
@@ -180,6 +181,7 @@ export function MyWorkspaceView({ onLeadClick }) {
   const [closingLead, setClosingLead] = useState(null);
   const [followUpLead, setFollowUpLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const isMobile = useIsMobile();
 
   // ✅ Stable selectors
   const myQualification = useLeadStore((state) => state.myQualification);
@@ -262,8 +264,8 @@ export function MyWorkspaceView({ onLeadClick }) {
 
       {/* PIPELINE HUD & CONTROLS */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-12">
-        {/* HUD Cards */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
+        {/* HUD Cards — hidden on mobile (companion app: no analytics clutter) */}
+        <div className="hidden md:flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
           {/* Metric 1 */}
           <div className="bg-white border border-slate-100 rounded-2xl p-5 flex items-center gap-4 shadow-lg shadow-indigo-900/5 flex-1 sm:w-64">
             <div className="bg-indigo-50 p-3 rounded-xl text-indigo-600">
@@ -316,21 +318,31 @@ export function MyWorkspaceView({ onLeadClick }) {
             >
               {/* Lead Info Content */}
               <div 
-                className="flex-1 cursor-pointer flex flex-col md:flex-row items-center gap-8"
+                className="flex-1 cursor-pointer flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8"
                 onClick={() => onLeadClick(lead.id)}
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl text-indigo-600 font-bold text-2xl flex items-center justify-center shrink-0">
-                  {lead.companyName?.charAt(0)}
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl text-indigo-600 font-bold text-xl md:text-2xl flex items-center justify-center shrink-0">
+                    {lead.companyName?.charAt(0)}
+                  </div>
+                  <div className="flex-1 md:hidden">
+                    <h3 className="text-base font-semibold text-slate-800">{lead.companyName}</h3>
+                    {isActionDue(lead) && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-[10px] font-medium border border-red-100">
+                        ⚠ Action Required
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
-                <div className="flex-1 text-center md:text-left">
+                <div className="hidden md:block flex-1">
                   <h3 className="text-xl font-semibold mb-1 text-slate-800">{lead.companyName}</h3>
                   {isActionDue(lead) && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-lg bg-red-50 text-red-600 text-[10px] font-medium border border-red-100">
                       ⚠ Action Required
                     </span>
                   )}
-                  <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm font-medium text-slate-500">
+                  <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-500">
                     <span className="flex items-center gap-1.5"><Mail size={14} className="text-slate-400" /> {lead.email}</span>
                     <span className="flex items-center gap-1.5"><CalendarDays size={14} className="text-slate-400" /> {new Date(lead.createdAt).toLocaleDateString()}</span>
                   </div>
@@ -421,10 +433,14 @@ export function MyWorkspaceView({ onLeadClick }) {
       
       </div>
 
-      {/* Right Sidebar: My Today */}
-      <div className="w-full xl:w-96 shrink-0 sticky top-24">
-        <MyTodaySidebar onLeadClick={onLeadClick} />
-      </div>
+      {/* Right Sidebar: My Today — CONDITIONALLY UNMOUNTED on mobile (not CSS-hidden).
+           Heavy component: fetches events, builds combinedItems, etc.
+           On mobile the companion app relies on the Calendar tab instead. */}
+      {!isMobile && (
+        <div className="w-full xl:w-96 shrink-0 sticky top-24">
+          <MyTodaySidebar onLeadClick={onLeadClick} />
+        </div>
+      )}
 
     </div>
   );
